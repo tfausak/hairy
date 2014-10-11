@@ -1,8 +1,31 @@
-> {-# LANGUAGE FlexibleContexts #-}
-> {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+Before we can begin, we need to enable a few language extensions.
+
 > {-# LANGUAGE OverloadedStrings #-}
 
+This extension allows string literals (like `"cheese"`) to represent string-like
+types such as `ByteString` and `Text`. It's not strictly required since you
+could do the same thing using `pack`, for instance. But it's so convenient that
+it's hard to live without.
+
+> {-# LANGUAGE FlexibleContexts #-}
+> {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
+These are a little harder to explain, so instead I'll explain them when they're
+used.
+
+Now we have to let GHC know that our module is called `Hairy`, not `Main` like
+it would otherwise assume.
+
 > module Hairy where
+
+Imports make up the last bit of the preamble. These are a little overly-specific
+in order to make it easier to see where everything came from. In the real world
+you might import everything from, say, `Web.Scotty.Trans` instead of explicitly
+listing everything you needed from it.
+
+For the most part, you don't have to worry about these imports. If you're
+curious about something later on, come back up here to see where it's imported
+from. Then look it up on Hackage.
 
 > import Control.Applicative (Applicative)
 > import Control.Monad.IO.Class (MonadIO, liftIO)
