@@ -37,6 +37,29 @@ $ cabal install hairy-0.1.1
 
 This package uses [Semantic Versioning][11].
 
+## Setup
+
+First create a database user for Hairy.
+
+``` sh
+$ createuser --createdb postgres
+```
+
+Then create databases for each environment.
+
+``` sh
+$ psql --username postgres --command 'CREATE DATABASE hairy_development'
+$ psql --username postgres --command 'CREATE DATABASE hairy_production'
+$ psql --username postgres --command 'CREATE DATABASE hairy_test'
+```
+
+Then just start the server!
+
+``` sh
+$ hairy
+# => http://localhost:3000
+```
+
 [1]: https://github.com/tfausak/hairy
 [2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
 [3]: https://hackage.haskell.org/package/hairy
