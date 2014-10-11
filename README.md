@@ -13,6 +13,11 @@ The entire project is meant to be easy to build, understand, and use. It doesn't
 really do anything useful, but it shows how to do anything at all. Take a look
 at [the literate source][8] to see how it all works.
 
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Setup](#setup)
+- [Configuration](#configuration)
+
 ## Requirements
 
 Hairy works best with the latest [Haskell Platform][9], but it also supports GHC
