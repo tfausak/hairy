@@ -8,9 +8,12 @@ copyright: 2014 Taylor Fausak <taylor@fausak.me>
 maintainer: Taylor Fausak <taylor@fausak.me>
 homepage: https://github.com/tfausak/hairy
 bug-reports: https://github.com/tfausak/hairy/issues
-synopsis: TODO
+synopsis: A RESTful CRUD web app.
 description:
-    TODO
+    A RESTful CRUD web app.
+    .
+    Check out <https://github.com/tfausak/hairy#readme the readme> for
+    documentation.
 category: Web
 author: Taylor Fausak <taylor@fausak.me>
 tested-with: GHC ==7.8.*
