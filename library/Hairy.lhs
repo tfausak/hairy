@@ -15,7 +15,8 @@
 > import qualified Database.Persist as DB
 > import qualified Database.Persist.Postgresql as DB
 > import Hairy.Models (Task, TaskId, migrateAll)
-> import Network.HTTP.Types.Status (created201, internalServerError500, notFound404)
+> import Network.HTTP.Types.Status (created201, internalServerError500,
+>   notFound404)
 > import Network.Wai (Middleware)
 > import Network.Wai.Handler.Warp (defaultSettings)
 > import Network.Wai.Middleware.RequestLogger (logStdout, logStdoutDev)
