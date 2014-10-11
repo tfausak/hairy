@@ -63,11 +63,11 @@
 
 > getConnectionString :: Environment -> DB.ConnectionString
 > getConnectionString Development =
->   "host=localhost port=5432 user=taylor dbname=hairy_development"
+>   "host=localhost port=5432 user=postgres dbname=hairy_development"
 > getConnectionString Production =
->   "host=localhost port=5432 user=taylor dbname=hairy_production"
+>   "host=localhost port=5432 user=postgres dbname=hairy_production"
 > getConnectionString Test =
->   "host=localhost port=5432 user=taylor dbname=hairy_test"
+>   "host=localhost port=5432 user=postgres dbname=hairy_test"
 
 > getConnectionSize :: Environment -> Int
 > getConnectionSize Development = 1
