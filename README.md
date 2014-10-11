@@ -83,7 +83,7 @@ Possible environments include `Development`, `Production`, and `Test`.
 [5]: https://travis-ci.org/tfausak/hairy
 [6]: https://img.shields.io/hackage-deps/v/hairy.svg?style=flat
 [7]: http://packdeps.haskellers.com/feed?needle=hairy
-[9]: ./library/Hairy.lhs
+[8]: ./library/Hairy.lhs
 [9]: https://www.haskell.org/platform/
 [10]: http://www.postgresql.org
 [11]: http://semver.org/spec/v2.0.0.html
