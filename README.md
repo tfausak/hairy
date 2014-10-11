@@ -26,10 +26,10 @@ $ cabal install hairy-0.1.1
 This package uses [Semantic Versioning][8].
 
 [1]: https://github.com/tfausak/hairy
-[2]: https://img.shields.io/hackage/v/hairy.svg
+[2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
 [3]: https://hackage.haskell.org/package/hairy
-[4]: https://img.shields.io/travis/tfausak/hairy/master.svg
+[4]: https://img.shields.io/travis/tfausak/hairy/master.svg?style=flat
 [5]: https://travis-ci.org/tfausak/hairy
-[6]: https://img.shields.io/hackage-deps/v/hairy.svg
+[6]: https://img.shields.io/hackage-deps/v/hairy.svg?style=flat
 [7]: http://packdeps.haskellers.com/feed?needle=hairy
 [8]: http://semver.org/spec/v2.0.0.html
