@@ -13,6 +13,11 @@ The entire project is meant to be easy to build, understand, and use. It doesn't
 really do anything useful, but it shows how to do anything at all. Take a look
 at [the literate source][8] to see how it all works.
 
+## Requirements
+
+Hairy works best with the latest [Haskell Platform][9], but it also supports GHC
+7.8 and 7.6. [PostgreSQL][10] 9.1 or later is also required.
+
 ## Installation
 
 Add it to your Cabal file:
@@ -30,7 +35,7 @@ $ cabal update
 $ cabal install hairy-0.1.1
 ```
 
-This package uses [Semantic Versioning][9].
+This package uses [Semantic Versioning][11].
 
 [1]: https://github.com/tfausak/hairy
 [2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
@@ -40,4 +45,6 @@ This package uses [Semantic Versioning][9].
 [6]: https://img.shields.io/hackage-deps/v/hairy.svg?style=flat
 [7]: http://packdeps.haskellers.com/feed?needle=hairy
 [9]: ./library/Hairy.lhs
-[9]: http://semver.org/spec/v2.0.0.html
+[9]: https://www.haskell.org/platform/
+[10]: http://www.postgresql.org
+[11]: http://semver.org/spec/v2.0.0.html
