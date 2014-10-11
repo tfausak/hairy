@@ -86,6 +86,7 @@
 >       r m = runReaderT (runConfigM m) c
 >   scottyOptsT o r r application
 
+> -- GeneralizedNewtypeDeriving
 > newtype ConfigM a = ConfigM
 >  { runConfigM :: ReaderT Config IO a
 >  } deriving (Applicative, Functor, Monad, MonadIO, MonadReader Config)
@@ -171,6 +172,7 @@
 >   runDB (DB.delete (toKey i :: TaskId))
 >   json Null
 
+> -- FlexibleContexts
 > toKey :: DB.ToBackendKey DB.SqlBackend a => Integer -> DB.Key a
 > toKey i = DB.toSqlKey (fromIntegral (i :: Integer))
 
