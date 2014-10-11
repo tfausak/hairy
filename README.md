@@ -28,7 +28,7 @@ This package uses [Semantic Versioning][8].
 [1]: https://github.com/tfausak/hairy
 [2]: https://img.shields.io/hackage/v/hairy.svg
 [3]: https://hackage.haskell.org/package/hairy
-[4]: https://travis-ci.org/tfausak/hairy.svg?branch=master
+[4]: https://img.shields.io/travis/tfausak/hairy/master.svg
 [5]: https://travis-ci.org/tfausak/hairy
 [6]: https://img.shields.io/hackage-deps/v/hairy.svg
 [7]: http://packdeps.haskellers.com/feed?needle=hairy
