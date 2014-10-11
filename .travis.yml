@@ -2,6 +2,7 @@ before_script:
 - psql -U postgres -c 'CREATE DATABASE hairy_test'
 ghc:
 - 7.8
+- 7.6
 install:
 - cabal install --enable-tests --jobs --only-dependencies
 language: haskell
