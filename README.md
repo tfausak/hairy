@@ -60,6 +60,17 @@ $ hairy
 # => http://localhost:3000
 ```
 
+## Configuration
+
+Hairy can be configured through environment variables. To configure the
+environment, use the `SCOTTY_ENV` environment variable.
+
+``` sh
+$ env SCOTTY_ENV=Production hairy
+```
+
+Possible environments include `Development`, `Production`, and `Test`.
+
 [1]: https://github.com/tfausak/hairy
 [2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
 [3]: https://hackage.haskell.org/package/hairy
