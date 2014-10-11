@@ -8,9 +8,9 @@ copyright: 2014 Taylor Fausak <taylor@fausak.me>
 maintainer: Taylor Fausak <taylor@fausak.me>
 homepage: https://github.com/tfausak/hairy
 bug-reports: https://github.com/tfausak/hairy/issues
-synopsis: A RESTful CRUD web app.
+synopsis: A JSON REST API
 description:
-    A RESTful CRUD web app.
+    Hairy is a JSON REST API.
     .
     Check out <https://github.com/tfausak/hairy#readme the readme> for
     documentation.
