@@ -3,3 +3,6 @@ before_script:
 ghc:
 - 7.8
 language: haskell
+script:
+- cabal install --enable-tests --jobs --only-dependencies
+- cabal test --jobs
