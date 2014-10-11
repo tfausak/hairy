@@ -1,5 +1,7 @@
 # Changelog
 
+# v0.1.2 (2014-10-11)
+
 - Support GHC 7.6.
 - Support aeson 0.8.
 - Support criterion 1.0.
