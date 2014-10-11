@@ -29,7 +29,7 @@ source-repository head
 library
     build-depends:
         base ==4.*,
-        aeson ==0.7.*,
+        aeson >=0.7 && <0.9,
         data-default ==0.5.*,
         http-types ==0.8.*,
         mtl ==2.*,
@@ -40,7 +40,7 @@ library
         scotty ==0.9.*,
         text ==1.*,
         time ==1.*,
-        transformers ==0.3.*,
+        transformers >=0.3 && <0.5,
         wai ==3.*,
         wai-extra ==3.*,
         warp ==3.*
@@ -84,7 +84,7 @@ benchmark criterion
     build-depends:
         base -any,
         hairy -any,
-        criterion ==0.8.*,
+        criterion >=0.8 && <2,
         http-types -any,
         mtl -any,
         persistent -any,
