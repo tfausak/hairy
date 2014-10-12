@@ -41,7 +41,8 @@ from. Then look it up on Hackage.
 > import Network.HTTP.Types.Status (created201, internalServerError500,
 >   notFound404)
 > import Network.Wai (Middleware)
-> import Network.Wai.Handler.Warp (defaultSettings)
+> import Network.Wai.Handler.Warp (Settings, defaultSettings,
+>   setFdCacheDuration, setPort)
 > import Network.Wai.Middleware.RequestLogger (logStdout, logStdoutDev)
 > import System.Environment (lookupEnv)
 > import Web.Scotty.Trans (ActionT, Options, ScottyT, defaultHandler, delete,
@@ -106,8 +107,8 @@ from. Then look it up on Hackage.
 
 > runApplication :: Config -> IO ()
 > runApplication c = do
->   let o = getOptions (environment c)
->       r m = runReaderT (runConfigM m) c
+>   o <- getOptions (environment c)
+>   let r m = runReaderT (runConfigM m) c
 >   scottyOptsT o r r application
 
 > -- GeneralizedNewtypeDeriving
@@ -115,15 +116,37 @@ from. Then look it up on Hackage.
 >  { runConfigM :: ReaderT Config IO a
 >  } deriving (Applicative, Functor, Monad, MonadIO, MonadReader Config)
 
-> getOptions :: Environment -> Options
-> getOptions Development = def
-> getOptions Production = def
->   { settings = defaultSettings
->   , verbose = 0
->   }
-> getOptions Test = def
->   { verbose = 0
->   }
+> getOptions :: Environment -> IO Options
+> getOptions e = do
+>   s <- getSettings e
+>   return def
+>     { settings = s
+>     , verbose = case e of
+>       Development -> 1
+>       Production -> 0
+>       Test -> 0
+>     }
+
+> getSettings :: Environment -> IO Settings
+> getSettings e = do
+>   let s = defaultSettings
+>       s' = case e of
+>         Development -> setFdCacheDuration 0 s
+>         Production -> s
+>         Test -> s
+>   m <- getPort
+>   let s'' = case m of
+>         Nothing -> s'
+>         Just p -> setPort p s'
+>   return s''
+
+> getPort :: IO (Maybe Int)
+> getPort = do
+>   m <- lookupEnv "PORT"
+>   let p = case m of
+>         Nothing -> Nothing
+>         Just s -> Just (read s)
+>   return p
 
 > type Error = Text
 
