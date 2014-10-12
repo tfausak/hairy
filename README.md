@@ -67,14 +67,26 @@ $ hairy
 
 ## Configuration
 
-Hairy can be configured through environment variables. To configure the
-environment, use the `SCOTTY_ENV` environment variable.
+Hairy can be configured through environment variables.
+
+To configure the environment, use the `SCOTTY_ENV` environment variable.
+Possible environments include `Development`, `Production`, and `Test`.
 
 ``` sh
 $ env SCOTTY_ENV=Production hairy
 ```
 
-Possible environments include `Development`, `Production`, and `Test`.
+To configure the port, use the `PORT` environment variable.
+
+``` sh
+$ env PORT=8080 hairy
+```
+
+To configure the database, use the `DATABASE_URL` environment variable.
+
+``` sh
+$ env DATABASE_URL=postgres://postgres:postgres@localhost:5432/hairy_development hairy
+```
 
 [1]: https://github.com/tfausak/hairy
 [2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
