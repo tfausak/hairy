@@ -34,6 +34,8 @@ from. Then look it up on Hackage.
 > import Control.Monad.Trans.Class (MonadTrans, lift)
 > import Data.Aeson (Value (Null), (.=), object)
 > import Data.Default (def)
+> import qualified Data.Text as T
+> import Data.Text.Encoding (encodeUtf8)
 > import Data.Text.Lazy (Text)
 > import qualified Database.Persist as DB
 > import qualified Database.Persist.Postgresql as DB
@@ -45,6 +47,7 @@ from. Then look it up on Hackage.
 >   setFdCacheDuration, setPort)
 > import Network.Wai.Middleware.RequestLogger (logStdout, logStdoutDev)
 > import System.Environment (lookupEnv)
+> import Web.Heroku (parseDatabaseUrl)
 > import Web.Scotty.Trans (ActionT, Options, ScottyT, defaultHandler, delete,
 >   get, json, jsonData, middleware, notFound, param, post, put, scottyOptsT,
 >   settings, showError, status, verbose)
@@ -77,21 +80,31 @@ from. Then look it up on Hackage.
 >   return e
 
 > getPool :: Environment -> IO DB.ConnectionPool
-> getPool e =
+> getPool e = do
+>   s <- getConnectionString e
 >   case e of
 >     Development -> runStdoutLoggingT (DB.createPostgresqlPool s n)
 >     Production -> runStdoutLoggingT (DB.createPostgresqlPool s n)
 >     Test -> runNoLoggingT (DB.createPostgresqlPool s n)
 >   where
->     s = getConnectionString e
 >     n = getConnectionSize e
 
-> getConnectionString :: Environment -> DB.ConnectionString
-> getConnectionString Development =
+> getConnectionString :: Environment -> IO DB.ConnectionString
+> getConnectionString e = do
+>   m <- lookupEnv "DATABASE_URL"
+>   case m of
+>     Nothing -> return (getDefaultConnectionString e)
+>     Just s -> do
+>       let u = parseDatabaseUrl s
+>           f (k, v) = T.concat [k, "=", v]
+>       return (encodeUtf8 (T.unwords (map f u)))
+
+> getDefaultConnectionString :: Environment -> DB.ConnectionString
+> getDefaultConnectionString Development =
 >   "host=localhost port=5432 user=postgres dbname=hairy_development"
-> getConnectionString Production =
+> getDefaultConnectionString Production =
 >   "host=localhost port=5432 user=postgres dbname=hairy_production"
-> getConnectionString Test =
+> getDefaultConnectionString Test =
 >   "host=localhost port=5432 user=postgres dbname=hairy_test"
 
 > getConnectionSize :: Environment -> Int
