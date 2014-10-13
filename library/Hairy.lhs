@@ -52,10 +52,23 @@ from. Then look it up on Hackage.
 >   get, json, jsonData, middleware, notFound, param, post, put, scottyOptsT,
 >   settings, showError, status, verbose)
 
+With all that out of the way, we can start on the actual program itself. The
+top-level entry point, `main`, only has two responsibilities: get the current
+configuration and run the application with that configuration.
+
 > main :: IO ()
 > main = do
 >   c <- getConfig
 >   runApplication c
+
+We could've written this in the point-free style.
+
+< main :: IO ()
+< main = getConfig >>= runApplication
+
+Getting the current configuration involves reading the environment from the
+system and then setting up the database connection pool. After doing both of
+those, we create a new `Config` value with the environment and pool.
 
 > getConfig :: IO Config
 > getConfig = do
@@ -66,10 +79,24 @@ from. Then look it up on Hackage.
 >     , pool = p
 >     }
 
+The data type for `Config` is pretty simple. It has two fields: one for the
+environment and one for the database connection pool. We'll define another data
+type for the environment, and we're using Persistent's `ConnectionPool` for the
+database connection pool.
+
 > data Config = Config
 >   { environment :: Environment
 >   , pool :: DB.ConnectionPool
 >   }
+
+We want to read the environment from the `SCOTTY_ENV` environment variable, then
+parse that string as our `Environment` data type and return it. If it doesn't
+parse, we'll just blow up.
+
+    $ env SCOTTY_ENV=NotAnEnvironment cabal run
+    hairy: Prelude.read: no parse
+
+If we wanted to handle it more gracefully, we could use `Text.Read.readMaybe`.
 
 > getEnvironment :: IO Environment
 > getEnvironment = do
@@ -79,25 +106,74 @@ from. Then look it up on Hackage.
 >         Just s -> read s
 >   return e
 
+We could've written this in the point-free style.
+
+< getEnvironment :: IO Environment
+< getEnvironment = fmap (maybe Development read) (lookupEnv "SCOTTY_ENV")
+
+Now that we've seen how to get the environment, let's see what the possible
+environments are. You could add more environments, like `Staging`, to suite your
+particular needs.
+
+> data Environment
+>   = Development
+>   | Production
+>   | Test
+>   deriving (Eq, Read, Show)
+
+With all the environment stuff out of the way, let's take a look at the database
+connection pool. It will be used by the application to make database queries, so
+it's responsible for configuring the database itself. That means logging,
+connection parameters, and pool size. To start, the top-level function gets the
+connection parameters and pool size, then determines which kind of logging to
+use.
+
 > getPool :: Environment -> IO DB.ConnectionPool
 > getPool e = do
 >   s <- getConnectionString e
+>   let n = getConnectionSize e
 >   case e of
 >     Development -> runStdoutLoggingT (DB.createPostgresqlPool s n)
 >     Production -> runStdoutLoggingT (DB.createPostgresqlPool s n)
 >     Test -> runNoLoggingT (DB.createPostgresqlPool s n)
->   where
->     n = getConnectionSize e
+
+This function is a little weird. I wish it could be written like this:
+
+< getPool :: Environment -> IO DB.ConnectionPool
+< getPool e = do
+<   s <- getConnectionString e
+<   let n = getConnectionSize e
+<       p = DB.createPostgresqlPool s n
+<       t = case e of
+<         Development -> runStdoutLoggingT
+<         Production -> runStdoutLoggingT
+<         Test -> runNoLoggingT
+<   t p
+
+Unfortunately the type system won't allow it. `runStdoutLoggingT` and
+`runNoLoggingT` work on different monad transformers. `createPostgresqlPool` is
+find with either of them, but it can't accept both simultaneously.
+
+Just like we looked up the environment through `SCOTTY_ENV`, we're going to look
+up the database connection parameters through `DATABASE_URL`. It's expected to
+look like this: `postgres://user:pass@host:port/db`. If it doesn't look like
+that, we'll blow up.
+
+    $ env DATABASE_URL=not-a-database-url cabal run
+    hairy: couldn't parse absolute uri
+
+If it's not given at all, we'll fall back to using a hard-coded default based on
+the environment.
 
 > getConnectionString :: Environment -> IO DB.ConnectionString
 > getConnectionString e = do
 >   m <- lookupEnv "DATABASE_URL"
->   case m of
->     Nothing -> return (getDefaultConnectionString e)
->     Just s -> do
->       let u = parseDatabaseUrl s
->           f (k, v) = T.concat [k, "=", v]
->       return (encodeUtf8 (T.unwords (map f u)))
+>   let s = case m of
+>         Nothing -> getDefaultConnectionString e
+>         Just u -> createConnectionString (parseDatabaseUrl u)
+>   return s
+
+These are the default connection parameters per environment.
 
 > getDefaultConnectionString :: Environment -> DB.ConnectionString
 > getDefaultConnectionString Development =
@@ -107,16 +183,31 @@ from. Then look it up on Hackage.
 > getDefaultConnectionString Test =
 >   "host=localhost port=5432 user=postgres dbname=hairy_test"
 
+This function converts a list of text tuples into a database connection string,
+which is a byte string. It joins each tuple with an equals sign and then joins
+each element in the list with a space.
+
+    >>> createConnectionString [("k1", "v1"), ("k2", "v2")]
+    "k1=v1 k2=v2"
+
+This is necessary to convert what `Web.Heroku.parseDatabaseUrl` gives us into
+something that Persistent can understand.
+
+> createConnectionString :: [(T.Text, T.Text)] -> DB.ConnectionString
+> createConnectionString l =
+>   let f (k, v) = T.concat [k, "=", v]
+>   in  encodeUtf8 (T.unwords (map f l))
+
+The last piece of the database puzzle is the size of the connection pool. In the
+real world you'd need to benchmark performance using different sizes to see what
+works best. A good baseline is two times the number of cores. That could be
+expressed here using `GHC.Conc.numCapabilities`, but there's not guarantee that
+the web server and the database server are even running on the same machine.
+
 > getConnectionSize :: Environment -> Int
 > getConnectionSize Development = 1
 > getConnectionSize Production = 8
 > getConnectionSize Test = 1
-
-> data Environment
->   = Development
->   | Production
->   | Test
->   deriving (Eq, Read, Show)
 
 > runApplication :: Config -> IO ()
 > runApplication c = do
