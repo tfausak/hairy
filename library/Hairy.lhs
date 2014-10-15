@@ -63,8 +63,8 @@ configuration and run the application with that configuration.
 
 We could've written this in the point-free style.
 
-< main :: IO ()
-< main = getConfig >>= runApplication
+    main :: IO ()
+    main = getConfig >>= runApplication
 
 Getting the current configuration involves reading the environment from the
 system and then setting up the database connection pool. After doing both of
@@ -93,7 +93,7 @@ We want to read the environment from the `SCOTTY_ENV` environment variable, then
 parse that string as our `Environment` data type and return it. If it doesn't
 parse, we'll just blow up.
 
-    $ env SCOTTY_ENV=NotAnEnvironment cabal run
+    $ env SCOTTY_ENV=not-an-environment cabal run
     hairy: Prelude.read: no parse
 
 If we wanted to handle it more gracefully, we could use `Text.Read.readMaybe`.
@@ -106,10 +106,10 @@ If we wanted to handle it more gracefully, we could use `Text.Read.readMaybe`.
 >         Just s -> read s
 >   return e
 
-We could've written this in the point-free style.
+We could've written this point-free.
 
-< getEnvironment :: IO Environment
-< getEnvironment = fmap (maybe Development read) (lookupEnv "SCOTTY_ENV")
+    getEnvironment :: IO Environment
+    getEnvironment = fmap (maybe Development read) (lookupEnv "SCOTTY_ENV")
 
 Now that we've seen how to get the environment, let's see what the possible
 environments are. You could add more environments, like `Staging`, to suite your
@@ -139,20 +139,20 @@ use.
 
 This function is a little weird. I wish it could be written like this:
 
-< getPool :: Environment -> IO DB.ConnectionPool
-< getPool e = do
-<   s <- getConnectionString e
-<   let n = getConnectionSize e
-<       p = DB.createPostgresqlPool s n
-<       t = case e of
-<         Development -> runStdoutLoggingT
-<         Production -> runStdoutLoggingT
-<         Test -> runNoLoggingT
-<   t p
+    getPool :: Environment -> IO DB.ConnectionPool
+    getPool e = do
+      s <- getConnectionString e
+      let n = getConnectionSize e
+          p = DB.createPostgresqlPool s n
+          t = case e of
+            Development -> runStdoutLoggingT
+            Production -> runStdoutLoggingT
+            Test -> runNoLoggingT
+      t p
 
 Unfortunately the type system won't allow it. `runStdoutLoggingT` and
 `runNoLoggingT` work on different monad transformers. `createPostgresqlPool` is
-find with either of them, but it can't accept both simultaneously.
+fine with either of them, but it can't accept both simultaneously.
 
 Just like we looked up the environment through `SCOTTY_ENV`, we're going to look
 up the database connection parameters through `DATABASE_URL`. It's expected to
@@ -187,7 +187,7 @@ This function converts a list of text tuples into a database connection string,
 which is a byte string. It joins each tuple with an equals sign and then joins
 each element in the list with a space.
 
-    >>> createConnectionString [("k1", "v1"), ("k2", "v2")]
+    > createConnectionString [("k1", "v1"), ("k2", "v2")]
     "k1=v1 k2=v2"
 
 This is necessary to convert what `Web.Heroku.parseDatabaseUrl` gives us into
@@ -201,7 +201,7 @@ something that Persistent can understand.
 The last piece of the database puzzle is the size of the connection pool. In the
 real world you'd need to benchmark performance using different sizes to see what
 works best. A good baseline is two times the number of cores. That could be
-expressed here using `GHC.Conc.numCapabilities`, but there's not guarantee that
+expressed here using `GHC.Conc.numCapabilities`, but there's no guarantee that
 the web server and the database server are even running on the same machine.
 
 > getConnectionSize :: Environment -> Int
@@ -252,18 +252,18 @@ only has two fields, so there's not a lot for us to do here.
 I explicitly listed all of the environments here to ensure that I got all of
 them. In the real world you might do something like this instead:
 
-< verbose = case e of
-<   Development -> 1
-<   _ -> 0
+    verbose = case e of
+      Development -> 1
+      _ -> 0
 
 Or, if you're feeling particularly witty:
 
-< verbose = fromEnum (e == Development)
+    verbose = fromEnum (e == Development)
 
 Most of the real options are in Wai's settings. The defaults are good for most
 of them, but we want to make two changes. First, we need to remove the file
 cache so that static file changes will be picked up. We only want to do this in
-production since static files should be static in other environments. Then we
+development since static files should be static in other environments. Then we
 want to use the port in the `PORT` environment variable, if it's available.
 
 > getSettings :: Environment -> IO Settings
@@ -271,7 +271,7 @@ want to use the port in the `PORT` environment variable, if it's available.
 >   let s = defaultSettings
 
 Here I'm using primes (`'`) to mark altered versions of the settings. There are
-probably better ways to do this type of "modification", but this works and is
+probably better ways to do this type of modification, but this works and is
 straighforward.
 
 >       s' = case e of
