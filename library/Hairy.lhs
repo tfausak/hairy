@@ -209,16 +209,34 @@ the web server and the database server are even running on the same machine.
 > getConnectionSize Production = 8
 > getConnectionSize Test = 1
 
+So we've set up our environment and our database connection. That's enough to
+let us move on to setting up the application itself. All we need to do here is
+get the options for Scotty and set up a runner for reading the configuration.
+
 > runApplication :: Config -> IO ()
 > runApplication c = do
 >   o <- getOptions (environment c)
+
+This takes Scotty's monad `m` and adds the ability to read our custom config `c`
+from it. This is called a monad transformer stack. It allows us to use any monad
+in the stack. So after layering on our config reader monad, we can both deal
+with requests using Scotty's monad and read our config using our monad.
+
 >   let r m = runReaderT (runConfigM m) c
 >   scottyOptsT o r r application
 
-> -- GeneralizedNewtypeDeriving
+Next we'll actually define our reader monad. This requires
+`GeneralizedNewtypeDeriving` to easily and efficiently derive instances for our
+type alias. The type signature of `runConfigM` tells us that it adds the ability
+to read `Config` to the `IO` monad, which is the bottom of Scotty's monad
+transformer stack.
+
 > newtype ConfigM a = ConfigM
 >  { runConfigM :: ReaderT Config IO a
 >  } deriving (Applicative, Functor, Monad, MonadIO, MonadReader Config)
+
+Let's circle back and see how we get Scotty's options. The data type exposed
+only has two fields, so there's not a lot for us to do here.
 
 > getOptions :: Environment -> IO Options
 > getOptions e = do
@@ -231,9 +249,31 @@ the web server and the database server are even running on the same machine.
 >       Test -> 0
 >     }
 
+I explicitly listed all of the environments here to ensure that I got all of
+them. In the real world you might do something like this instead:
+
+< verbose = case e of
+<   Development -> 1
+<   _ -> 0
+
+Or, if you're feeling particularly witty:
+
+< verbose = fromEnum (e == Development)
+
+Most of the real options are in Wai's settings. The defaults are good for most
+of them, but we want to make two changes. First, we need to remove the file
+cache so that static file changes will be picked up. We only want to do this in
+production since static files should be static in other environments. Then we
+want to use the port in the `PORT` environment variable, if it's available.
+
 > getSettings :: Environment -> IO Settings
 > getSettings e = do
 >   let s = defaultSettings
+
+Here I'm using primes (`'`) to mark altered versions of the settings. There are
+probably better ways to do this type of "modification", but this works and is
+straighforward.
+
 >       s' = case e of
 >         Development -> setFdCacheDuration 0 s
 >         Production -> s
@@ -244,6 +284,13 @@ the web server and the database server are even running on the same machine.
 >         Just p -> setPort p s'
 >   return s''
 
+Finally we need to handle looking up the port. Like our other functions that
+read from environment variables, this one will blow up if you give it something
+it's not expecting.
+
+    $ env PORT=not-a-port cabal run
+    hairy: Prelude.read: no parse
+
 > getPort :: IO (Maybe Int)
 > getPort = do
 >   m <- lookupEnv "PORT"
@@ -251,6 +298,9 @@ the web server and the database server are even running on the same machine.
 >         Nothing -> Nothing
 >         Just s -> Just (read s)
 >   return p
+
+That wraps up all of the configuration, options, and settings. Everything from
+here on out deals with the application itself.
 
 > type Error = Text
 
