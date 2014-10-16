@@ -37,7 +37,7 @@ Or install it manually:
 
 ``` sh
 $ cabal update
-$ cabal install hairy-0.1.2
+$ cabal install hairy-0.1.3
 ```
 
 This package uses [Semantic Versioning][11].
