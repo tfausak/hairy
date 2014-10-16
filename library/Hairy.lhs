@@ -465,3 +465,8 @@ the HTTP status to 404 and render `null`.
 > notFoundA = do
 >   status notFound404
 >   json Null
+
+That's all there is to it! With less than 200 lines of code we've created a JSON
+REST API with some CRUD actions. It's all backed by a database and can be
+configured to run in development mode on your machine or in production on
+Heroku.
