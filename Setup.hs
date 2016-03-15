@@ -1,8 +1,4 @@
-module Setup
-  ( main
-  ) where
-
-import Distribution.Simple (defaultMain)
+import qualified Distribution.Simple
 
 main :: IO ()
-main = defaultMain
+main = Distribution.Simple.defaultMain

@@ -1,8 +1,7 @@
-# [Hairy][1]
+# [Hairy][]
 
-[![Package version][2]][3]
-[![Build status][4]][5]
-[![Dependency status][6]][7]
+[![Version badge][]][version]
+[![Build badge][]][build]
 
 Hairy is a JSON REST API built in Haskell. It uses Scotty to create a WAI
 application served by the Warp web server. The Aeson library handles encoding
@@ -88,13 +87,11 @@ To configure the database, use the `DATABASE_URL` environment variable.
 $ env DATABASE_URL=postgres://postgres:postgres@localhost:5432/hairy_development hairy
 ```
 
-[1]: https://github.com/tfausak/hairy
-[2]: https://img.shields.io/hackage/v/hairy.svg?style=flat
-[3]: https://hackage.haskell.org/package/hairy
-[4]: https://img.shields.io/travis/tfausak/hairy/master.svg?style=flat
-[5]: https://travis-ci.org/tfausak/hairy
-[6]: https://img.shields.io/hackage-deps/v/hairy.svg?style=flat
-[7]: http://packdeps.haskellers.com/feed?needle=hairy
+[Hairy]: https://github.com/tfausak/hairy
+[Version badge]: https://img.shields.io/hackage/v/hairy.svg
+[version]: https://hackage.haskell.org/package/hairy
+[Build badge]: https://img.shields.io/travis/tfausak/hairy/master.svg
+[build]: https://travis-ci.org/tfausak/hairy
 [8]: ./library/Hairy.lhs
 [9]: https://www.haskell.org/platform/
 [10]: http://www.postgresql.org

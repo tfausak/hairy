@@ -1,0 +1,5 @@
+extra-deps:
+- heroku-0.1.2.3
+install-ghc: true
+require-stack-version: ! '>=1.0.4'
+resolver: lts-5.8
