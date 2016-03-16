@@ -19,7 +19,6 @@ author: Taylor Fausak <taylor@fausak.me>
 tested-with: GHC ==7.6.* GHC ==7.8.*
 extra-source-files:
     CHANGELOG.md
-    CONTRIBUTING.md
     README.md
 
 source-repository head
