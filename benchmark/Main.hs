@@ -13,11 +13,9 @@ import Database.Persist.Sql (ConnectionPool, insert_, rawExecute, runSqlPool)
 import Hairy (Config (Config), Environment (Test), application, pool,
   environment, getPool, runConfigM)
 import Hairy.Models (Task (Task), taskContent, taskCreated)
-import Network.HTTP.Types.Status (created201, notFound404, ok200)
 import Network.Wai.Internal (requestMethod)
 import Network.Wai.Test (SRequest (SRequest), defaultRequest, request,
-  runSession, setPath, simpleBody, simpleHeaders, simpleRequest,
-  simpleRequestBody, simpleStatus, srequest)
+  runSession, setPath, simpleRequest, simpleRequestBody, srequest)
 import Web.Scotty.Trans (scottyAppT)
 
 main :: IO ()

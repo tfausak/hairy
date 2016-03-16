@@ -27,7 +27,6 @@ For the most part, you don't have to worry about these imports. If you're
 curious about something later on, come back up here to see where it's imported
 from. Then look it up on Hackage.
 
-> import Control.Applicative (Applicative)
 > import Control.Monad.IO.Class (MonadIO, liftIO)
 > import Control.Monad.Logger (runNoLoggingT, runStdoutLoggingT)
 > import Control.Monad.Reader (MonadReader, ReaderT, asks, runReaderT)
