@@ -28,7 +28,7 @@ main = do
         , pool = p
         }
       t m = runReaderT (runConfigM m) c
-  a <- scottyAppT t t application
+  a <- scottyAppT t (application c)
 
   hspec $ before (resetDB p) $ do
     describe "/" $ do

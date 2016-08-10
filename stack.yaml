@@ -1,9 +1,5 @@
 extra-deps:
 - heroku-0.1.2.3
-- http-types-0.8.6
-- scotty-0.9.1
-- wai-3.0.3.0
-- warp-3.0.13.1
 install-ghc: true
 require-stack-version: ! '>=1.0.4'
-resolver: lts-5.8
+resolver: lts-6.9
